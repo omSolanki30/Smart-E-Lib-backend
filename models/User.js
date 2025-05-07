@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
 const bookHistorySchema = new mongoose.Schema({
-  bookId: { type: mongoose.Schema.Types.ObjectId, ref: "Book", required: true },
+  bookId: { type: mongoose.Schema.Types.ObjectId, ref: "Books", required: true },
   bookTitle: String,
   coverImage: String,
   author: String,
@@ -32,10 +32,10 @@ const userSchema = new mongoose.Schema(
     rawPassword: String,
     role: { type: String, enum: ["student", "admin"], default: "student" },
     totalIssuedBooks: { type: Number, default: 0 },
-    currentIssuedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
+    currentIssuedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Books" }],
     issueHistory: [bookHistorySchema],
     penalty: { type: Number, default: 0 },
-    overdueBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Book" }],
+    overdueBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Books" }],
     otherDetails: {
       fullName: String,
       contactNumber: String,

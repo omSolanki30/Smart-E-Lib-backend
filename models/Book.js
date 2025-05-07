@@ -9,7 +9,7 @@ const bookSchema = new mongoose.Schema(
     pdfUrl: { type: String, required: true },
     isAvailable: { type: Boolean, default: true },
   },
-  { strict: false }
+  { strict: false, timestamps: true, }
 );
 
 export const Book = mongoose.model("Books", bookSchema);

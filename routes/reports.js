@@ -37,22 +37,40 @@ router.get('/issued-stats', async (req, res) => {
 
     const totalIssued = allTxns.length;
     const currentlyIssued = allTxns.filter(t => !t.returned).length;
-    const returned = allTxns.filter(t => t.returned).length;
+    const returned = totalIssued - currentlyIssued;
 
     const monthly = {};
+
     allTxns.forEach(txn => {
       const month = new Date(txn.issueDate).toLocaleString('default', { month: 'short', year: 'numeric' });
-      if (!monthly[month]) monthly[month] = 0;
-      monthly[month]++;
+
+      if (!monthly[month]) {
+        monthly[month] = { issued: 0, currentlyIssued: 0, returned: 0 };
+      }
+
+      monthly[month].issued++;
+
+      if (txn.returned) {
+        monthly[month].returned++;
+      } else {
+        monthly[month].currentlyIssued++;
+      }
     });
 
-    const monthlyData = Object.entries(monthly).map(([month, count]) => ({ month, count }));
+    const monthlyData = Object.entries(monthly).map(([month, stats]) => ({
+      month,
+      issued: stats.issued,
+      currentlyIssued: stats.currentlyIssued,
+      returned: stats.returned,
+      count: stats.issued // for backward compatibility
+    }));
 
     res.json({ totalIssued, currentlyIssued, returned, monthlyData });
   } catch (err) {
     res.status(500).json({ message: 'Error generating report' });
   }
 });
+
 
 router.get("/most-issued-monthly", async (req, res) => {
   try {
